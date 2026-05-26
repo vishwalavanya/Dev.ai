@@ -5,7 +5,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Check API key
+
 if (!process.env.SAMBANOVA_API_KEY) {
   console.error("❌ SAMBANOVA_API_KEY is missing!");
   process.exit(1);
@@ -13,9 +13,9 @@ if (!process.env.SAMBANOVA_API_KEY) {
 
 const SAMBANOVA_API_KEY = process.env.SAMBANOVA_API_KEY;
 const SAMBANOVA_URL = "https://api.sambanova.ai/v1/chat/completions";
-const MODEL = "gpt-oss-120b"; // ✅ Free / OSS model
+const MODEL = "gpt-oss-120b"; 
 
-// ✅ Health check
+
 app.get("/", (req, res) => {
   res.json({ message: "🚀 Deva AI backend is running!", model: MODEL });
 });
@@ -24,7 +24,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", model: MODEL });
 });
 
-// ✅ Chat route (LOGIC UNCHANGED)
+
 app.post("/api/chat", async (req, res) => {
   try {
     const { systemPrompt, messages } = req.body;
@@ -33,7 +33,7 @@ app.post("/api/chat", async (req, res) => {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    // Build messages array (same logic)
+    
     const chatMessages = [];
 
     if (systemPrompt) {
@@ -50,7 +50,6 @@ app.post("/api/chat", async (req, res) => {
       });
     });
 
-    // ✅ Sambanova API call (ONLY CHANGE)
     const response = await fetch(SAMBANOVA_URL, {
       method: "POST",
       headers: {
@@ -62,7 +61,7 @@ app.post("/api/chat", async (req, res) => {
         messages: chatMessages,
         max_tokens: 4000,
         temperature: 0.9,
-        stream: false, // ✅ CLEAN OUTPUT ONLY
+        stream: false, 
       }),
     });
 
@@ -76,7 +75,7 @@ app.post("/api/chat", async (req, res) => {
 
     const data = await response.json();
 
-    // ✅ Same output format as before
+    
     const reply =
       data.choices?.[0]?.message?.content || "No response received.";
 
